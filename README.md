@@ -76,3 +76,4 @@ https://code.google.com/p/selenium/
 
 http://docs.seleniumhq.org/docs/04_webdriver_advanced.jsp
 
+https://github.com/camme/webdriverjs
