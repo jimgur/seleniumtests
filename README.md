@@ -1,6 +1,11 @@
 Selenium Mobile Web Integration Tests
 =====================================
 
+# Split into 3 categories
+    - `Anonymous user`
+    - `Logged in user`
+    - `Logged in pro user`
+
 # Running the Tests
 
 `mocha -R list mobileweb.js`
@@ -39,14 +44,6 @@ Put the `chromedriver` binary into your PATH ( `/usr/bin/` or wherever, ensure C
     `https://code.google.com/p/selenium/wiki/ChromeDriver`
     `http://peter.sh/experiments/chromium-command-line-switches/`
     
-=====================================
-
-# Integration Tests
-
-- Split into 2 categories:
-    - `big` : scenarios that require a login
-    - `small` : scenarios that do not require a login
-
 =====================================
 
 # Resources

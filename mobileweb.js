@@ -15,7 +15,7 @@ capabilities.set('chrome.switches', [
 
 var URL = 'http://m.jim.imgur-dev.com/';
 var by = webdriver.By;
-var WAITLENGTH = 10000; // 10 seconds
+var WAITLENGTH = 10000; // 10 seconds timeout on DOM elements being accessible.
 
 var createDriver = function() {
     var driver = new webdriver.Builder().withCapabilities(capabilities).build();
@@ -27,21 +27,16 @@ describe('Anonymous user', function() {
 
     var driver;
 
-    before(function(){
-        driver = createDriver();
-    });
+    before(function(){ driver = createDriver(); });
+    after(function(){ driver.quit(); });
     
-    after(function(){
-        driver.quit();
+    describe('Gallery', function() {
+        it('should default to hot section with viral sort', function() {
+            driver.get(URL);
+            driver.findElement(by.name('section')).getAttribute('value').then(function(value){ assert.equal(value, 'hot'); });
+            driver.findElement(by.name('sort')).getAttribute('value').then(function(value){ assert.equal(value, 'viral'); });
+        });
     });
-    
-    it('should default to hot section with viral sort', function() {
-        
-        driver.get(URL);
-        driver.findElement(by.name('section')).getAttribute('value').then(function(value){ assert.equal(value, 'hot'); });
-        driver.findElement(by.name('sort')).getAttribute('value').then(function(value){ assert.equal(value, 'viral'); });
-    });
-    
 
     describe('Header', function() {
 
@@ -52,8 +47,10 @@ describe('Anonymous user', function() {
         });
         
     });
-           
+
 });
 
 
+describe('Logged in user', function() { });
+describe('Logged in pro user', function() { });
 
