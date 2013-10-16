@@ -7,6 +7,9 @@ http://selenium.googlecode.com/svn/trunk/docs/api/java/org/openqa/selenium/WebEl
 Test suite examples
 https://code.google.com/p/selenium/source/browse/javascript/webdriver/test/webdriver_finddomelement_test.html
 
+## Highly useful: API export listings in tests
+https://code.google.com/p/selenium/source/browse/javascript/webdriver/exports/exports_test.js
+
 =====================================
 
 # Split into 3 categories
