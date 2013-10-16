@@ -1,6 +1,11 @@
 Selenium Mobile Web Integration Tests
 =====================================
 
+WebElement API
+http://selenium.googlecode.com/svn/trunk/docs/api/java/org/openqa/selenium/WebElement.html#findElements(org.openqa.selenium.By)
+
+=====================================
+
 # Split into 3 categories
     - `Anonymous user`
     - `Logged in user`
@@ -49,11 +54,22 @@ Put the `chromedriver` binary into your PATH ( `/usr/bin/` or wherever, ensure C
 # Resources
 
 http://nerds.airbnb.com/front-end-testing/
+
 https://sites.google.com/site/imemoryloss/redhat-as-es-centos/install-google-chrome-with-yum-on-fedora-15-14-centos-red-hat-rhel-6
+
 https://www.google.com/search?q=selenium+testing+for+mobile+web&oq=selenium+testing+for+mobile+web&aqs=chrome..69i57j0.8600j0j7&sourceid=chrome&espv=210&es_sm=91&ie=UTF-8#es_sm=91&espv=210&q=selenium+testing+for+mobile+web&safe=off&start=10
+
 http://zooskdev.wordpress.com/2013/05/03/automating-mobile-testing-with-selenium-using-appium/
+
 http://blip.tv/pycon-us-videos-2009-2010-2011/pycon-2011-testing-the-mobile-and-desktop-web-with-selenium-2-0-better-faster-and-more-pythonicly-4901071
+
 http://www.slideshare.net/hugs/selenium2mobilewebtesting
+
 http://docs.seleniumhq.org/
+
 http://appium.io/
+
 https://code.google.com/p/selenium/
+
+http://docs.seleniumhq.org/docs/04_webdriver_advanced.jsp
+
