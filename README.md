@@ -4,6 +4,9 @@ Selenium Mobile Web Integration Tests
 WebElement API
 http://selenium.googlecode.com/svn/trunk/docs/api/java/org/openqa/selenium/WebElement.html#findElements(org.openqa.selenium.By)
 
+Test suite examples
+https://code.google.com/p/selenium/source/browse/javascript/webdriver/test/webdriver_finddomelement_test.html
+
 =====================================
 
 # Split into 3 categories
