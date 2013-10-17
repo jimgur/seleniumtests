@@ -5,6 +5,7 @@ var webdriver = require('selenium-webdriver');
 (function(m){ for(var k in m) { global[k] = m[k]; } })(require('selenium-webdriver/testing'));
 
 var capabilities = webdriver.Capabilities.chrome();
+// TODO: For some reason these flags are not honored. look into this
 capabilities.set('chrome.switches', [
     '--enabled',
     '--simulate-touch-screen-with-mouse',
@@ -26,41 +27,76 @@ var createDriver = function() {
 describe('Anonymous user', function() {
 
     var driver;
-
-    before(function(){ driver = createDriver(); driver.get(URL); });
-    after(function(){ driver.quit(); });
     
-    /*
+    // Selector function, instead of awkward chaining.
+    // todo: change this to a jquery style selector
+    global.$ = function(){
+        var queryResult = driver;
+        for(var i=0; i<arguments.length; i++) {
+            var arg = arguments[i];
+            var findElementParams = (typeof arg === 'string') ? { 'className' : arg } : arg;
+            queryResult = queryResult.findElement(findElementParams);
+        }
+        return queryResult;
+    };
+    
     describe('Header', function() {
             
-        it('should open when clicked on', function() {
-            driver.findElement({ className : 'user-menu' })
+        before(function(){ driver = createDriver(); driver.get(URL); });
+        after(function(){ driver.quit(); });
+    
+        it('opens/closes menu when menu button is clicked', function() {
+            $('user-menu')
                 .isDisplayed()
                 .then(function(value){ assert.equal(value, false); })
-            driver.findElement({ className : 'menu-btn' })
+            
+            $('menu-btn')
                 .click();
-            driver.findElement({ className : 'user-menu' })
+                
+            $('user-menu')
                 .isDisplayed()
                 .then(function(value){ assert.equal(value, true); })
-            driver.findElement({ className : 'menu-btn' })
+                
+            $('menu-btn')
                 .click();
         });
         
+        it('goes to upload page when upload button is clicked', function(){
+            $('upload-btn')
+                .click();
+            $('upload-view')
+                .isDisplayed()
+                .then(function(value){ assert.equal(value, true); });
+            // Mobile Web only has device and URL
+            $({ id : 'device-button' })
+                .isDisplayed()
+                .then(function(value){ assert.equal(value, true); });
+            $({ id : 'upload-url' })
+                .isDisplayed()
+                .then(function(value){ assert.equal(value, true); });
+                
+            driver.navigate().back();
+        });
+        
+        //it('goes to user submitted gallery when section is changed', function(){
+        //});
+        
     });
-    */
     
     describe('Gallery', function() {
-        // These are done in order.
+    
+        before(function(){ driver = createDriver(); driver.get(URL); });
+        after(function(){ driver.quit(); });
     
         it('defaults to today\'s page, hot section with viral sort', function() {
-            driver.findElement({ name : 'section' })
+            $({ name : 'section' })
                 .getAttribute('value')
                 .then(function(value){ assert.equal(value, 'hot'); });
-            driver.findElement({ name : 'sort'})
+            $({ name : 'sort'})
                 .getAttribute('value')
                 .then(function(value){ assert.equal(value, 'viral'); });
             
-            driver.findElement({ className : 'page-header'})
+            $('page-header')
                 .getText()
                 .then(function(value){ assert.equal(value.indexOf('(today)')!=-1, true); });
         });
@@ -71,22 +107,36 @@ describe('Anonymous user', function() {
             
             // Make sure we've enough time to render the next page before checking...
             driver.wait(function(){
-                return driver.findElements({ className : 'page-header'}).then(function(hdr) {
-                    return hdr.length > 1;
-                });
-            }, 5000 ); // wait at most 5 seconds.
+                return driver.findElements({ className : 'page-header'})
+                    .then(function(hdr) {
+                        return hdr.length > 1;
+                    });
+            }, WAITLENGTH ); // wait at most 5 seconds.
             
-            driver.findElements({ className : 'page-header' })
+            driver.findElements({ className : 'page-header'})
                 .then(function(headers){
                     headers[1].getText().then(function(value){ assert.equal(value.indexOf('(yesterday)')!=-1, true); });
                 });
         });
         
+        it('hides the header when after scrolling down', function(){
+            $({ id : 'header'})
+                .isDisplayed()
+                .then(function(value){ assert.equal(value, false); });
+        });
+        
+        it('shows the header when after scrolling back up', function(){
+            driver.executeScript('window.scrollBy(0,-200)', '');
+            $({ id : 'header'})
+                .isDisplayed()
+                .then(function(value){ assert.equal(value, true); });
+        });
+        
         it('loads the inside gallery when you click on a thumbnail', function() {
-            driver.findElement({ className : 'gallery-item'}).findElement({ tagName : 'a' })
+            $('gallery-item', { tagName : 'a' })
                 .click();
             
-            driver.findElement({ className : 'insideContainer' }).findElement({ className : 'comment-form' })
+            $('insideContainer', 'comment-form')
                 .getAttribute('placeholder')
                 .then(function(value){
                     assert.equal(value, 'submit a comment');
@@ -94,30 +144,32 @@ describe('Anonymous user', function() {
         });
         
         // On the Inside now
-        it('shows login screen when trying to upvote, downvote, or favorite', function() {
-            var assertClickGoesToSignInPage = function() {
-                
-                // todo: turn this into a selector of sorts, maybe rip off jquery selector code? to make life easier?
-                var queryResult = driver;
-                for(var i=0; i<arguments.length; i++) {
-                    queryResult = queryResult.findElement({ className : arguments[i] });
-                }
-                queryResult.click();
+        it('shows login screen when trying to upvote, downvote, favorite, comment', function() {
+            var assertClickGoesToSignInPage = function(el) {
+                // Need this otherwise it errors out because element is not clickable.
+                driver.executeScript('window.scrollTo(0,'+(el.getLocation().y)+')');
+                driver.sleep(200);
+                el.click();
             
-                driver.findElement({ name : 'submit' })
-                    .getAttribute('value')
-                    .then(function(value){
-                        assert.equal(value, 'sign in');
-                    });
+                driver.wait(function(){
+                    return $({ name : 'submit' })
+                        .getAttribute('value')
+                        .then(function(value){
+                            assert.equal(value, 'sign in');
+                            return true;
+                        });    
+                }, WAITLENGTH);
                 
                 driver.navigate().back();
             };
         
-            assertClickGoesToSignInPage('main-button-container', 'upvote');
-            assertClickGoesToSignInPage('main-button-container', 'downvote');
-            assertClickGoesToSignInPage('favorite-icon');
+            assertClickGoesToSignInPage($('main-button-container', 'upvote'));
+            assertClickGoesToSignInPage($('main-button-container', 'downvote'));
+            assertClickGoesToSignInPage($('favorites', 'favorite-icon'));
+            assertClickGoesToSignInPage($('insideContainer', 'comment-form'));
             
-        })
+            
+        });
     });
 
 });
