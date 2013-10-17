@@ -147,9 +147,10 @@ describe('Anonymous user', function() {
         it('shows login screen when trying to upvote, downvote, favorite, comment', function() {
             var assertClickGoesToSignInPage = function(el) {
                 // Need this otherwise it errors out because element is not clickable.
-                driver.executeScript('window.scrollTo(0,'+(el.getLocation().y)+')');
-                driver.sleep(200);
-                el.click();
+                driver.executeScript('window.scrollTo(0,'+(el.getLocation().y)+')');    // scroll this element into view
+                driver.sleep(200);                                                      // make sure we're scrolled.
+                
+                el.click(); // now we can click on it
             
                 driver.wait(function(){
                     return $({ name : 'submit' })
